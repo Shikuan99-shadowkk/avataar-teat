@@ -140,6 +140,7 @@
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 import Avataaars from "vuejs-avataaars";
 // import html2Canvas from "html2canvas";
 export default {
@@ -260,28 +261,56 @@ export default {
             console.log(value);
         },
         
+        tstofile(blob,filename,filetype) {
+            return new Promise((resolve)=> {
+                console.log(blob,filename,filetype)
+                console.log(new window.File([blob],filename,filetype))
+                resolve(new File([blob],filename,filetype))
+            })
+        },
         exportPic() {
             console.log(this.$refs.avatar.$el.outerHTML);
+            //var data = new FormData();
+
             const link = document.createElement("a");
             let blob = new Blob([this.$refs.avatar.$el.outerHTML], {
                 type: "image/svg+xml",
             });
             link.style.display = "none";
             link.href = URL.createObjectURL(blob);
-            link.download = "avatar.svg";
+            link.download = uuidv4() + ".svg";
             document.body.appendChild(link);
-            //link.click();
-            fetch(`https://image-bank-toloka.herokuapp.com/upload/`, {
+            link.click();
+            
+            console.log(blob,"file...")
+            
+            //var myFile = blobToFile(blob, "my-image.png");
+            //data.set('a', blob, 'avatartest.svg');
+            this.tstofile(blob, `my_image${new Date()}.svg`, {type: "image/svg+xml", lastModified: new Date(), size: 2,}).then(res=>{
+                let formData = new FormData()
+                formData.append('file',res)
+                // ba ni qingqiu
+                fetch(`https://image-bank-toloka.herokuapp.com/upload`, {
                 method:"POST", 
-                mode:'no-cors',
-                // headers: {
-                // 'Content-Type': 'multipart/form-data',
-                // // 'Content-Length' : '',
-                // // 'Host': '',
-                // 'Accept': 'application/json'
-                // },
-                body:blob})
+                // mode:'no-cors',
+                
+                body:formData})
+            
+                
                 .then(response => console.log(response.text()))
+
+            })
+            //console.log.apply(link.href)
+            //const file =  new File([blob], `my_image${new Date()}.svg`, {type: "image/svg+xml", lastModified: new Date(), size: 2,});
+            // data.append("file",file);
+            // fetch(`https://image-bank-toloka.herokuapp.com/upload`, {
+            //     method:"POST", 
+            //     // mode:'no-cors',
+                
+            //     body:file})
+            
+                
+            //     .then(response => console.log(response.text()))
 
             
             
@@ -290,6 +319,8 @@ export default {
 
             
         },
+        
+        
     },
 };
 </script>

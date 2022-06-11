@@ -11,6 +11,7 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.15.9",
     "html2canvas": "^1.4.1",
+    "uuid": "^8.3.2",
     "vue": "^2.6.11",
     "vuejs-avataaars": "^4.0.1",
     "yarn": "^1.22.19"
