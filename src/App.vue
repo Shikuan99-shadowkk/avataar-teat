@@ -201,7 +201,7 @@ export default {
                     const file_url = url + `/data/${a}`
                     console.log(file_url)
                     console.log(a)
-                    window.alert("Please copy this link to Toloka: \n" + file_url)
+                    window.alert("Please copy this link to Toloka: " + file_url)
                 })
 
 
