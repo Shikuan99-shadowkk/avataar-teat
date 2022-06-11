@@ -201,11 +201,16 @@ export default {
                     const file_url = url + `/data/${a}`
                     console.log(file_url)
                     console.log(a)
-                    window.alert("Please copy this link to Toloka: " + file_url)
+                    window.alert("Link copied, paste in Toloka. If copy did not work, please manually copy:  "+ file_url);
+                    setTimeout(async()=>console.log(
+                        await navigator.clipboard.writeText(file_url).then(function() {
+                    console.log('Async: Copying to clipboard was successful!');
+                    }, function(err) {
+                    console.error('Async: Could not copy text: ', err);
+                    })), 3000);
+                    
+                    
                 })
-
-
-
 
             document.body.removeChild(link);
         },
