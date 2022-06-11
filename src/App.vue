@@ -13,9 +13,9 @@
                     :eyebrowType="'DefaultNatural'"
                     :eyeType="'Default'"
                     :topType="topType"
-                    :facialHairColor="facialHairColor"
-                    :mouthType="mouthType"
-                    :facialHairType="facialHairType"
+                    :facialHairColor="'Black'"
+                    :mouthType="'Smile'"
+                    :facialHairType="'Blank'"
                     :graphicType="'Cumbia'"
                     :hairColor="hairColor"
                 >
@@ -82,57 +82,9 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="mouthType">
-                    <el-select
-                        v-model="mouthType"
-                        @change="handleChange"
-                        placeholder="Select Mouth Type"
-                    >
-                        <el-option
-                            v-for="item in options4"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="facialHairType">
-                    <el-select
-                        v-model="facialHairType"
-                        @change="handleChange"
-                        placeholder="Select Facial Hair Type"
-                    >
-                        <el-option
-                            v-for="item in options5"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item label="facialHairColor">
-                    <el-select
-                        v-model="facialHairColor"
-                        @change="handleChange"
-                        placeholder="Select Facial Hair Color"
-                    >
-                        <el-option
-                            v-for="item in options3"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                        >
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
             
                 <el-button type="primary" @click="exportPic('head')"
-                    >download</el-button
+                    >Save</el-button
                 >
             </el-form>
         </div>
@@ -140,7 +92,6 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid';
 import Avataaars from "vuejs-avataaars";
 // import html2Canvas from "html2canvas";
 export default {
@@ -155,9 +106,6 @@ export default {
             skinColor:"Pale",
             topType: "NoHair",
             hairColor: "Black",
-            mouthType: "Default",
-            facialHairType: "Blank",
-            facialHairColor: "Black",
             
             options3:[
                 { labal: "Auburn", value: "Auburn" },
@@ -220,107 +168,47 @@ export default {
                 { labal: "ShortHairTheCaesar", value: "ShortHairTheCaesar" },
                 { labal: "ShortHairTheCaesarSidePart", value: "ShortHairTheCaesarSidePart" },
   
-
-
             ],
-
-            options4:[
-                { labal: "Concerned", value: "Concerned" },
-                { labal: "Default", value: "Default" },
-                { labal: "Disbelief", value: "Disbelief" },
-                { labal: "Eating", value: "Eating" },
-                { labal: "Eating", value: "Eating" },
-                { labal: "Sad", value: "Sad" },
-                { labal: "ScreamOpen", value: "ScreamOpen" },
-                { labal: "Serious", value: "Serious" },
-                { labal: "Smile", value: "Smile" },
-                { labal: "Tongue", value: "Tongue" },
-                { labal: "Twinkle", value: "Twinkle" },
-                { labal: "Vomit", value: "Vomit" },
-            ],
-
-            options5:[
-                { labal: "Blank", value: "Blank" },
-                { labal: "BeardMedium", value: "BeardMedium" },
-                { labal: "BeardLight", value: "BeardLight" },
-                { labal: "BeardMagestic", value: "BeardMagestic" },
-                { labal: "MoustacheFancy", value: "MoustacheFancy" },
-                { labal: "MoustacheMagnum", value: "MoustacheMagnum" },
-
-            ],
-
-            
-
-
-
-
         };
     },
     methods: {
         handleChange(value) {
             console.log(value);
         },
-        
-        tstofile(blob,filename,filetype) {
-            return new Promise((resolve)=> {
-                console.log(blob,filename,filetype)
-                console.log(new window.File([blob],filename,filetype))
-                resolve(new File([blob],filename,filetype))
-            })
-        },
         exportPic() {
-            console.log(this.$refs.avatar.$el.outerHTML);
-            //var data = new FormData();
-
+            //  console.log(this.$refs.avatar.$el.outerHTML);
             const link = document.createElement("a");
             let blob = new Blob([this.$refs.avatar.$el.outerHTML], {
                 type: "image/svg+xml",
             });
             link.style.display = "none";
             link.href = URL.createObjectURL(blob);
-            link.download = uuidv4() + ".svg";
+            link.download = "avatar.svg";
             document.body.appendChild(link);
-            link.click();
-            
-            console.log(blob,"file...")
-            
-            //var myFile = blobToFile(blob, "my-image.png");
-            //data.set('a', blob, 'avatartest.svg');
-            this.tstofile(blob, `my_image${new Date()}.svg`, {type: "image/svg+xml", lastModified: new Date(), size: 2,}).then(res=>{
-                let formData = new FormData()
-                formData.append('file',res)
-                // ba ni qingqiu
-                fetch(`https://image-bank-toloka.herokuapp.com/upload`, {
-                method:"POST", 
-                // mode:'no-cors',
-                
-                body:formData})
-            
-                
-                .then(response => console.log(response.text()))
+            //link.click();
+            // data = new FormData();
+            const file = new File([blob], `my_image${new Date()}.jpeg`, { type: "image/jpeg", lastModified: new Date(), size: 2, });
+            console.log(blob, file)
 
+            const url = 'https://image-bank-toloka.herokuapp.com'
+            //const dev_url = `http://localhost:5000/upload`
+            fetch(url + '/upload', {
+                method: "POST",
+                body: blob
             })
-            //console.log.apply(link.href)
-            //const file =  new File([blob], `my_image${new Date()}.svg`, {type: "image/svg+xml", lastModified: new Date(), size: 2,});
-            // data.append("file",file);
-            // fetch(`https://image-bank-toloka.herokuapp.com/upload`, {
-            //     method:"POST", 
-            //     // mode:'no-cors',
-                
-            //     body:file})
-            
-                
-            //     .then(response => console.log(response.text()))
+                .then(async response => {
+                    const a = await response.text()
+                    const file_url = url + `/data/${a}`
+                    console.log(file_url)
+                    console.log(a)
+                    window.alert("Please copy this link to Toloka: \n" + file_url)
+                })
 
-            
-            
+
+
 
             document.body.removeChild(link);
-
-            
         },
-        
-        
     },
 };
 </script>
@@ -333,7 +221,6 @@ export default {
     text-align: center;
     color: #2c3e50;
 }
-
 .main {
     width: 600px;
     margin: 60px auto;
